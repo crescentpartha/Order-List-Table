@@ -1,13 +1,24 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useOrders from '../hooks/useOrders';
 import DisplayOrder from './OrderDisplay';
 
 const Order = () => {
+    const [search, setSearch] = useState('');
+    // console.log(search);
     const [orders] = useOrders();
     // console.log(orders);
 
     return (
         <div className='m-10'>
+
+            {/* Text field to Search */}
+            <input
+                type="text"
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder="Search by customer name..."
+                className="input input-bordered input-primary w-full max-w-xs"
+            />
+
             <h2 className="text-3xl font-medium font-lobster mb-2 text-secondary text-center uppercase">List of Orders</h2>
 
             {/* Display all orders data by fetching data from order API */}
@@ -28,7 +39,14 @@ const Order = () => {
                     <tbody>
                         {
                             // orders.map(order => console.log(order))
-                            orders.map(order => <DisplayOrder
+                            orders.filter((item) => {
+                                // One way to filter
+                                // return search.toLowerCase() === ''
+                                //     ? item
+                                //     : item.customer_name?.toLowerCase().includes(search)
+
+                                return item.customer_name.toLowerCase().startsWith(search.toLowerCase()) // Another way to filter
+                            }).map(order => <DisplayOrder
                                 key={order.order_id}
                                 order={order}
                             ></DisplayOrder>)

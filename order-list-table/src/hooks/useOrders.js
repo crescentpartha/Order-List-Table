@@ -6,7 +6,7 @@ const useOrders = () => {
     useEffect(() => {
         fetch('http://localhost:5000/order')
             .then(res => res.json())
-            .then(data => setOrders(data[0].orders));
+            .then(data => setOrders(data));
     }, [orders]);
 
     return [orders, setOrders];
