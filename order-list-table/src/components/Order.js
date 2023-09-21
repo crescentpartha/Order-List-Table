@@ -5,13 +5,60 @@ import DisplayOrder from './OrderDisplay';
 
 const Order = () => {
     const { register, handleSubmit, formState: { errors } } = useForm();
+    const [sortDate, setSortDate] = useState('');
+    const [sortCustomerName, setSortCustomerName] = useState('');
     const [orderStatus, setOrderStatue] = useState('');
     const [productName, setProductName] = useState('');
     // console.log(orderStatus, productName);
     const [search, setSearch] = useState('');
     // console.log(search);
-    const [orders] = useOrders({orderStatus, productName});
+    const [orders] = useOrders({ orderStatus, productName });
     // console.log(orders);
+
+
+    /* Sorting by Date, Customer_Name and Order_Id */
+
+    // Sorting by Date
+    function byDate(a, b) {
+        // chronologically by year, month, then day
+        return new Date(b.order_date).valueOf() - new Date(a.order_date).valueOf(); // timestamps
+    }
+    // console.log(orders.sort(byDate));
+    if (sortDate === "Descending") orders.sort(byDate);
+
+    // Sorting by Customer_Name Ascending Order
+    function byCustomerNameAsc(a, b) {
+        // Alphabetically by Name
+        if (a.customer_name > b.customer_name) return 1;
+        else if (b.customer_name > a.customer_name) return -1;
+        else return 0;
+    }
+    // orders.sort(byCustomerNameAsc);
+    if (sortCustomerName === "Ascending") orders.sort(byCustomerNameAsc);
+
+    // Sorting by Customer_Name Descending Order
+    function byCustomerNameDesc(a, b) {
+        // Alphabetically by Name
+        if (b.customer_name > a.customer_name) return 1;
+        else if (a.customer_name > b.customer_name) return -1;
+        else return 0;
+    }
+    // orders.sort(byCustomerNameDesc);
+    if (sortCustomerName === "Descending") orders.sort(byCustomerNameDesc);
+
+    // Sorting by Id Ascending Order
+    function byIdAsc(a, b) {
+        // numerically by id
+        return parseInt(a.order_id) - parseInt(b.order_id);
+    }
+    // orders.sort(byIdAsc);
+
+    // Sorting by Id Descending Order
+    function byIdDesc(a, b) {
+        // numerically by id
+        return parseInt(b.order_id) - parseInt(a.order_id);
+    }
+    // orders.sort(byIdDesc);
 
     const onSubmit = (data) => {
         // console.log(data);
@@ -31,7 +78,7 @@ const Order = () => {
             />
 
             {/* Implement filter functionality for order_status */}
-            <form className='flex flex-row gap-2 my-2 justify-center' onSubmit={handleSubmit(onSubmit)}>
+            <form className='flex flex-row gap-2 my-2 py-5 rounded justify-center bg-accent' onSubmit={handleSubmit(onSubmit)}>
 
                 {/* Order Status */}
                 <div className='text-start'>
@@ -42,7 +89,7 @@ const Order = () => {
                         <option value="Delivered">Delivered</option>
                     </select>
                     <label className="label">
-                        {errors.gender?.type === 'required' && <span className="label-text-alt text-error">{errors.gender?.message}</span>}
+                        {errors.order_status?.type === 'required' && <span className="label-text-alt text-error">{errors.order_status?.message}</span>}
                     </label>
                 </div>
 
@@ -57,7 +104,7 @@ const Order = () => {
                         <option value="Product E">Product E</option>
                     </select>
                     <label className="label">
-                        {errors.type?.type === 'required' && <span className="label-text-alt text-error">{errors.type?.message}</span>}
+                        {errors.product_name?.type === 'required' && <span className="label-text-alt text-error">{errors.product_name?.message}</span>}
                     </label>
                 </div>
 
@@ -70,6 +117,27 @@ const Order = () => {
                     />
                 </div>
             </form>
+
+            {/* Sorting by Date, Customer_Name */}
+            <div className='flex flex-row gap-2 my-2 justify-center'>
+                {/* Sorting by Date */}
+                <div className='text-start'>
+                    <select {...register("date", { required: "Select one option" })} defaultValue="" onChange={(e) => setSortDate(e.target.value)} className='select select-primary w-full max-w-xs'>
+                        <option value="">Sort by Date</option>
+                        <option value="Ascending">Ascending</option>
+                        <option value="Descending">Descending</option>
+                    </select>
+                </div>
+
+                {/* Sorting by Customer_Name */}
+                <div className='text-start'>
+                    <select {...register("customer_name", { required: "Select one option" })} defaultValue="" onChange={(e) => setSortCustomerName(e.target.value)} className='select select-primary w-full max-w-xs'>
+                        <option value="">Sort by Customer Name</option>
+                        <option value="Ascending">Ascending</option>
+                        <option value="Descending">Descending</option>
+                    </select>
+                </div>
+            </div>
 
             <h2 className="text-3xl font-medium font-lobster mb-2 text-secondary text-center uppercase">List of Orders</h2>
 
